@@ -164,3 +164,74 @@ TEST(List, can_find_element_in_list)
 
     ASSERT_EQ(l1.find(100), l1.Get_First());
 }
+
+TEST(List, iterator_implication)
+{
+    const int size = 5;
+    List<int> l1(size);
+    l1[1] = 1; l1[2] = 2;
+    auto first = l1.begin();
+
+    first++;
+
+    ASSERT_EQ(l1[1], *first);
+}
+
+TEST(List, returning_iterator_data)
+{
+    const int size = 5;
+    List<int> l1(size);
+    l1[0] = 100;
+    auto first = l1.begin();
+
+    int res = *first;
+
+    ASSERT_EQ(l1[0], res);
+}
+/*
+TEST(List, returning_link_on_iterator_data)
+{
+    const int size = 5;
+    List<int> l1(size);
+    l1[0] = 100;
+    auto first = l1.begin();
+
+    l1.begin()->;
+
+    ASSERT_EQ(l1[0], res);
+}*/
+
+TEST(List, equal_iterators_are_equal)
+{
+    const int size = 5;
+    List<int> l1(size);
+    l1[0] = 100;
+    auto first1 = l1.begin();
+    auto first2 = l1.begin();
+
+    ASSERT_EQ(first1==first2, true);
+}
+
+TEST(List, non_equal_iterators_are_equal)
+{
+    const int size = 5;
+    List<int> l1(size);
+    List<int> l2(size);
+    l1[0] = 100;
+    l1[0] = 1;
+    auto first1 = l1.begin();
+    auto first2 = l2.begin();
+
+    ASSERT_EQ(first1 == first2, false);
+}
+
+/*
+TEST(List, correctly_define_iterator_on_start_of_list)
+{
+    const int size = 5;
+    List<int> l1(size);
+    auto first1 = l1.begin();
+    auto first2;
+
+    ASSERT_EQ(first1==first2, true);
+}*/

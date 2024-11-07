@@ -16,19 +16,46 @@ class List {
 
 		Node& operator=(const Node& other) {
 			data = other.data;
-			next = nullptr;
 			next = other.next;
-		}
-
-		~Node() {
-			next = nullptr;
-			data = 0;
 		}
 	};
 
-	Node* First;
+	Node* First;	
 
 public:
+	class Iterator {
+		Node* current;
+	public:
+		explicit Iterator(Node* node) : current(node) {}
+
+		Iterator& operator++() {
+			current = current->next;
+			return *this;
+		}
+
+		Iterator operator++(int) {
+			Iterator copy = *this;
+			current = current->next;
+			return copy;
+		}
+
+		T& operator*() {
+			return current->data;
+		}
+
+		T* operator->() {
+			return &(current->data);
+		}
+
+		friend bool operator==(const Iterator& it1, const Iterator& it2) {
+			return it1.current == it2.current;
+		}
+
+		friend bool operator!=(const Iterator& it1, const Iterator& it2) {
+			return it1.current != it2.current;
+		}
+	};
+
 	List() :First(nullptr) {}
 
 	List(const List& other) {
@@ -69,7 +96,7 @@ public:
 	}
 
 	List& operator=(const List& other) {
-		if (!other.First) {
+		if (other.First == nullptr) {
 			First = nullptr;
 			return *this;
 		}
@@ -204,8 +231,18 @@ public:
 		return First;
 	}
 
+	Iterator begin() {
+		return Iterator(First);
+	}
+
+	Iterator end() {
+		return nullptr;
+	}
+
 	Node* erase(Node* prev) {
 		Node* current = prev->next;
+
+		if (current == nullptr) throw "Can`t delete empty element";
 
 		prev->next = current->next;
 		delete current;
@@ -220,5 +257,70 @@ public:
 		delete current;
 
 		return First;
+	}
+
+	Node* split() { //Needed for sort (split list in two halfs)
+		Node* slow = First;
+		Node* fast = First;
+		Node* mid;
+
+		while ((fast != nullptr) && (fast->next != nullptr)) {
+			fast = (fast->next)->next;
+
+			if (fast != nullptr) {
+				slow = slow->next;
+			}
+		}
+
+		mid = slow->next;
+		slow->next = nullptr;  //split our list on two smaller lists
+
+		std::cout << "Split1 start\n";
+		List check1;
+		check1.First = First;
+		check1.print();
+		std::cout << "Split1 finish\n";
+
+		std::cout << "Split2 start\n";
+		List check2;
+		check2.First = mid;
+		check2.print();
+		std::cout << "Split2 finish\n";
+
+		return mid;
+	}
+
+	void sort() {
+		if  (((*this).First == nullptr) || ((*this).First->next == nullptr)) return;
+		std::cout << "Sort started\n";
+		List res;
+		List other;
+
+		Node* mid = (*this).split();
+		other.First = mid; //list other is a second half of given list
+
+		std::cout << "List was splitted\n";
+
+		(*this).sort(); //sorting first half of list
+		other.sort(); //sorting second half of list
+		
+		std::cout << "Data was sorted\n";
+
+		res.First = unite((*this).First, other.First);
+		(*this).First = res.First;
+	}
+
+	friend Node* unite(Node* current, Node* other) { //Needed for sort (unite lists in sorted one)
+		if (current == nullptr) return other;
+		if (other == nullptr) return current;
+
+		if (current->data < other->data) {
+			current->next = unite(current->next, other);
+			return current;
+		}
+		else {
+			other->next = unite(current, other->next);
+			return other;
+		}
 	}
 };
