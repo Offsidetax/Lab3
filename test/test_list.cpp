@@ -225,13 +225,33 @@ TEST(List, non_equal_iterators_are_equal)
     ASSERT_EQ(first1 == first2, false);
 }
 
-/*
-TEST(List, correctly_define_iterator_on_start_of_list)
+TEST(List, no_error_while_sorting_list)
+{
+    const int size = 10;
+    List<int> l1(size);
+    l1[0] = 43; l1[1] = 243; l1[2] = 32;  l1[3] = 9022;
+
+    ASSERT_NO_THROW(sort(l1));
+}
+
+TEST(List, no_error_while_sorting_list_of_length_one)
+{
+    const int size = 1;
+    List<int> l1(size);
+    l1[0] = 43;
+
+    ASSERT_NO_THROW(sort(l1));
+}
+
+TEST(List, correctly_sorting_list)
 {
     const int size = 5;
     List<int> l1(size);
-    auto first1 = l1.begin();
-    auto first2;
-
-    ASSERT_EQ(first1==first2, true);
-}*/
+    l1[0] = 43; l1[1] = 0; l1[2] = 432;  l1[3] = 2;
+    List<int> l2(size);
+    l2[0] = 0; l2[1] = 0; l2[2] = 2;  l2[3] = 43;  l2[4] = 432;
+    
+    sort(l1);
+    
+    ASSERT_EQ(l1, l2);
+}
